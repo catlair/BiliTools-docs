@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="message-push">
     <el-collapse-transition>
       <div>
-        <el-form ref="form" :model="message.email" label-width="140px">
+        <el-form ref="emailForm" :model="message.email" :rules="rules" label-width="140px">
           <el-form-item label="使用消息推送">
             <el-switch v-model="messagePush.use"></el-switch>
           </el-form-item>
@@ -15,24 +15,24 @@
                 <el-switch @change="changeMsgEmailCustom" v-model="messagePush.useEmailCustom" active-color="#13ce66"
                            style="margin-left: 10px"></el-switch>
                 <el-collapse-transition>
-                  <div v-show="messagePush.useEmailCustom">
-                    <el-form-item required label="发件邮箱">
-                      <el-input size="mini" type="email" placeholder="from email"
-                                v-model="message.email.from"></el-input>
+                  <div class="email" v-show="messagePush.useEmailCustom" style="margin-left: -140px;">
+                    <el-form-item label="发件邮箱" prop="from">
+                      <el-input type="email" placeholder="from email"
+                                v-model.trim="message.email.from"></el-input>
                     </el-form-item>
-                    <el-form-item required label="邮箱授权码">
-                      <el-input size="mini" placeholder="邮箱授权码" v-model="message.email.pass"
+                    <el-form-item label="邮箱授权码" prop="pass">
+                      <el-input placeholder="邮箱授权码" v-model.trim="message.email.pass"
                                 show-password></el-input>
                     </el-form-item>
-                    <el-form-item label="接收邮箱">
-                      <el-input size="mini" type="email" placeholder="to email"
-                                v-model="message.email.to"></el-input>
+                    <el-form-item label="接收邮箱" prop="to">
+                      <el-input type="email" placeholder="to email"
+                                v-model.trim="message.email.to"></el-input>
                     </el-form-item>
-                    <el-form-item required label="服务器地址">
-                      <el-input size="mini" placeholder="发送邮件的服务器地址" v-model="message.email.host"></el-input>
+                    <el-form-item label="服务器地址" prop="host">
+                      <el-input placeholder="发送邮件的服务器地址" v-model.trim="message.email.host"></el-input>
                     </el-form-item>
-                    <el-form-item required label="端口">
-                      <el-input size="mini" placeholder="安全信息默认465" v-model="message.email.port"></el-input>
+                    <el-form-item label="端口" prop="port">
+                      <el-input placeholder="安全信息默认465" v-model.number="message.email.port"></el-input>
                     </el-form-item>
                   </div>
                 </el-collapse-transition>
@@ -41,7 +41,7 @@
           </div>
         </el-form>
         <div v-show="messagePush.use">
-          <el-form ref="form2" :model="message" label-width="160px">
+          <el-form ref="serverChanForm" :model="message" :rules="rules" label-width="160px">
             <el-form-item label="server酱">
               <el-switch @change="changeMessageServerChan" v-model="messagePush.useServerChan"
                          style="margin-right: 60px"></el-switch>
@@ -51,12 +51,14 @@
                          style="margin-left: 10px"></el-switch>
               <el-collapse-transition>
                 <div v-show="messagePush.useServerChanCustom">
-                  <el-input
-                      type="textarea"
-                      autosize
-                      placeholder="请输入server酱的key"
-                      v-model="message.serverChan">
-                  </el-input>
+                  <el-form-item prop="serverChan" style="margin-bottom: 30px">
+                    <el-input
+                        type="textarea"
+                        autosize
+                        placeholder="请输入server酱的key"
+                        v-model.trim="message.serverChan">
+                    </el-input>
+                  </el-form-item>
                 </div>
               </el-collapse-transition>
             </el-form-item>
@@ -91,6 +93,14 @@ export default {
       },
       config: {
         message: {}
+      },
+      rules: {
+        from: [{required: true, type: 'email', message: '邮箱格式不正确', trigger: 'blur'}],
+        pass: [{required: true, message: '授权码不能为空', trigger: 'blur'}],
+        host: [{required: true, message: '服务器地址复制下呗', trigger: 'blur'}],
+        to: [{type: 'email', message: '邮箱格式不正确', trigger: 'blur'}],
+        port: [{type: 'number', message: '端口为数字', trigger: 'blur'}],
+        serverChan: [{required: true, message: '密钥不能为空', trigger: 'blur'}],
       }
     }
   },
@@ -105,7 +115,8 @@ export default {
       this.messagePush.useEmailCustom && (this.messagePush.useEmail = true)
     },
     changeMsgServerChanCustom() {
-      this.messagePush.useServerChanCustom && (this.messagePush.useServerChan = true)
+      this.messagePush.useServerChanCustom && (this.messagePush.useServerChan = true);
+      this.$refs['serverChanForm'].clearValidate('serverChan')
     },
     setMessage() {
       let message = {
@@ -114,7 +125,7 @@ export default {
       }
       if (this.messagePush.use === false) {
         this.config.message = false
-        return;
+        return true;
       }
       if (this.messagePush.useServerChan === false) {
         message.serverChan = false
@@ -133,14 +144,29 @@ export default {
       const allTrue = Object.values(message).every(el => el === true);
       if (allTrue) {
         this.config.message = true;
-        return;
+        return true;
       }
       this.config.message = message;
+
+      let emailFormValid = true, serverChanValid = true;
+      this.$refs['emailForm'].validate((valid) => {
+        if (!valid) {
+          return emailFormValid = false;
+        }
+      });
+      this.$refs['serverChanForm'].validate((valid) => {
+        if (!valid) {
+          return serverChanValid = false;
+        }
+      });
+      return emailFormValid && serverChanValid
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style>
+.message-push .email .el-form-item {
+  margin: 20px auto;
+}
 </style>

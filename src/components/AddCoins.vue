@@ -23,9 +23,9 @@
               :label="'自定义UP' + (index + 1)"
               :key="up.key"
               :prop="`customizeUp.${index}.value`"
-              :rules="[{type:'number',message:'up主id为数字',trigger:'blur'}]"
+              :rules="{pattern: /^\d*$/, message:'up主id为数字',trigger:'blur'}"
           >
-            <el-input size="small" v-model="up.value"
+            <el-input size="small" v-model.number="up.value"
                       style="width: 180px; margin-right: 20px;"></el-input>
             <el-button size="mini" @click.prevent="removeUp(up)">删除</el-button>
           </el-form-item>
@@ -95,7 +95,14 @@ export default {
     setCustomizeUp() {
       this.config = JSON.parse(JSON.stringify(this.form));
       this.config.customizeUp = this.form.customizeUp.map(up => up.value).filter(up => up.trim() !== '');
-    },
+      let formValid = true;
+      this.$refs['form'].validate((valid) => {
+        if (!valid) {
+          return formValid = false;
+        }
+      });
+      return formValid
+    }
   }
 }
 </script>

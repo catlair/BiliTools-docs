@@ -47,25 +47,30 @@ export default {
     }
   },
   methods: {
-    setData() {
-      this.$refs.tasksManages.setFunction()
-      this.$refs.SCFManage.setSCF();
-      this.$refs.messagePush.setMessage();
-      this.$refs.addCoins.setCustomizeUp()
-      this.$refs.baseConfig.setBaseConfig()
-    },
     onSubmit() {
-      this.setData();
-      let data = {
-        ...this.$refs.tasksManages.config,
-        ...this.$refs.SCFManage.config,
-        ...this.$refs.messagePush.config,
-        ...this.$refs.addCoins.config,
-        ...this.$refs.baseConfig.config,
-      };
-      console.log(data)
-      this.$store.commit("pushAccount", data);
-      this.$router.push('/users')
+      this.$refs.tasksManages.setFunction();
+      const SCFManage = this.$refs.SCFManage.setSCF(),
+          messagePush = this.$refs.messagePush.setMessage(),
+          addCoins = this.$refs.addCoins.setCustomizeUp(),
+          baseConfig = this.$refs.baseConfig.setBaseConfig();
+
+      console.log(SCFManage, messagePush, addCoins, baseConfig)
+
+      if (SCFManage && messagePush && addCoins && baseConfig) {
+        let data = {
+          ...this.$refs.tasksManages.config,
+          ...this.$refs.SCFManage.config,
+          ...this.$refs.messagePush.config,
+          ...this.$refs.addCoins.config,
+          ...this.$refs.baseConfig.config,
+        };
+        console.log(data)
+        this.$store.commit("pushAccount", data);
+        this.$message.success('添加账号成功')
+        this.$router.push('/users')
+      } else {
+        this.$message.warning('请检查表单是否有误')
+      }
     },
     changeCloseFunction() {
       const value = this.$refs.tasksManages.form.closeFunValues
