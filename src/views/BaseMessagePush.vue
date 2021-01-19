@@ -2,22 +2,22 @@
   <div class="base-message-push">
     <el-form ref="emailForm" :model="message.email" :rules="rules" label-width="140px">
       <el-form-item label="使用邮箱推送">
-        <el-switch v-model="messagePush.useEmail"></el-switch>
+        <el-switch v-model.trim="messagePush.useEmail"></el-switch>
       </el-form-item>
       <el-form-item label="发件邮箱" prop="from">
         <el-input type="email" placeholder="from email"
-                  v-model="message.email.from"></el-input>
+                  v-model.trim="message.email.from"></el-input>
       </el-form-item>
       <el-form-item label="邮箱授权码" prop="pass">
-        <el-input placeholder="邮箱授权码" v-model="message.email.pass"
+        <el-input placeholder="邮箱授权码" v-model.trim="message.email.pass"
                   show-password></el-input>
       </el-form-item>
       <el-form-item label="接收邮箱" prop="to">
         <el-input type="email" placeholder="to email"
-                  v-model="message.email.to"></el-input>
+                  v-model.trim="message.email.to"></el-input>
       </el-form-item>
       <el-form-item label="服务器地址" prop="host">
-        <el-input placeholder="发送邮件的服务器地址" v-model="message.email.host"></el-input>
+        <el-input placeholder="发送邮件的服务器地址" v-model.trim="message.email.host"></el-input>
       </el-form-item>
       <el-form-item label="端口" prop="port">
         <el-input placeholder="安全信息默认465" v-model.number="message.email.port"></el-input>
@@ -26,7 +26,7 @@
     <el-divider></el-divider>
     <el-form ref="serverChanForm" :model="message" :rules="rules" label-width="140px">
       <el-form-item label="使用server酱">
-        <el-switch v-model="messagePush.useServerChan"></el-switch>
+        <el-switch v-model.trim="messagePush.useServerChan"></el-switch>
       </el-form-item>
       <el-form-item label="server酱" prop="serverChan">
         <el-input

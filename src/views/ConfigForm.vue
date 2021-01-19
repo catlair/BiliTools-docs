@@ -14,7 +14,7 @@
       <el-col :span="10">
         <div class="grid-content bg-purple">
           <add-coins ref="addCoins" @update:useAddCoin="changeCloseFunction" v-model="useAddCoin"></add-coins>
-          <s-c-f-manage ref="SCFManage" v-model="useSCF"></s-c-f-manage>
+          <s-c-f-manage ref="SCFManage"></s-c-f-manage>
           <message-push ref="messagePush"></message-push>
         </div>
       </el-col>
@@ -43,7 +43,6 @@ export default {
   },
   data() {
     return {
-      useSCF: false,
       useAddCoin: true,
     }
   },

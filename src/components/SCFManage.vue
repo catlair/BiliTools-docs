@@ -2,7 +2,7 @@
   <div>
     <el-form ref="form" :model="scf" label-width="140px">
       <el-form-item label="使用腾讯云函数">
-        <el-switch @change="changeUseSCF" :value="useSCF"></el-switch>
+        <el-switch v-model="useSCF"></el-switch>
       </el-form-item>
       <el-collapse-transition>
         <div v-show="useSCF">
@@ -44,14 +44,10 @@ import region from '@/data/scf-region'
 
 export default {
   name: "SCFManage",
-  props: ['useSCF'],
-  model: {
-    prop: 'useSCF',
-    event: 'update:useSCF'
-  },
   data() {
     return {
       region,
+      useSCF: true,
       scf: {
         appName: 'catlair_Bilibili',
         name: '',
@@ -63,9 +59,6 @@ export default {
     }
   },
   methods: {
-    changeUseSCF() {
-      this.$emit('update:useSCF', !this.useSCF)
-    },
     setSCF() {
       if (!this.useSCF) {
         this.config.sls = null;
