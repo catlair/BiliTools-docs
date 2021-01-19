@@ -1,40 +1,44 @@
 <template>
   <div>
-    <el-form-item label="投币功能">
-      <el-switch @change="changeUseAddCoin" :value="useAddCoin"></el-switch>
-    </el-form-item>
-    <el-collapse-transition>
-      <div v-show="useAddCoin">
-        <el-form-item label="保留硬币">
-          <el-input-number size="mini" :min="0" v-model="form.stayCoins"></el-input-number>
-        </el-form-item>
-        <el-form-item label="投币目标">
-          <el-input-number size="mini" :min="0" :max="20" v-model="form.targetCoins"></el-input-number>
-        </el-form-item>
-        <el-form-item label="目标等级">
-          <el-input-number size="mini" :min="0" :max="6" v-model="form.targetLevel"></el-input-number>
-        </el-form-item>
-        <el-form-item label="视频搜索重试次数">
-          <el-input-number size="mini" :min="0" :max="10" v-model="form.coinRetryNum"></el-input-number>
-        </el-form-item>
-        <el-form-item
-            v-for="(up, index) in form.customizeUp"
-            :label="'自定义UP' + (index + 1)"
-            :key="up.key"
-        >
-          <el-input size="small" v-model="up.value"
-                    style="width: 180px; margin-right: 20px;"></el-input>
-          <el-button size="mini" @click.prevent="removeUp(up)">删除</el-button>
-        </el-form-item>
-        <el-form-item style="margin-top: -20px">
-          <el-button size="mini" @click="addCustomizeUp">新增up</el-button>
-        </el-form-item>
-        <el-form-item label="投币精准匹配">
-          <el-switch @change="changeUpperAccMatch" v-model="form.upperAccMatch" active-color="#13ce66"
-                     inactive-color="#ff4949"></el-switch>
-        </el-form-item>
-      </div>
-    </el-collapse-transition>
+    <el-form ref="form" :model="form" label-width="140px">
+      <el-form-item label="投币功能">
+        <el-switch @change="changeUseAddCoin" :value="useAddCoin"></el-switch>
+      </el-form-item>
+      <el-collapse-transition>
+        <div v-show="useAddCoin">
+          <el-form-item label="保留硬币">
+            <el-input-number size="mini" :min="0" v-model="form.stayCoins"></el-input-number>
+          </el-form-item>
+          <el-form-item label="投币目标">
+            <el-input-number size="mini" :min="0" :max="20" v-model="form.targetCoins"></el-input-number>
+          </el-form-item>
+          <el-form-item label="目标等级">
+            <el-input-number size="mini" :min="0" :max="6" v-model="form.targetLevel"></el-input-number>
+          </el-form-item>
+          <el-form-item label="视频搜索重试次数">
+            <el-input-number size="mini" :min="0" :max="10" v-model="form.coinRetryNum"></el-input-number>
+          </el-form-item>
+          <el-form-item
+              v-for="(up, index) in form.customizeUp"
+              :label="'自定义UP' + (index + 1)"
+              :key="up.key"
+              :prop="`customizeUp.${index}.value`"
+              :rules="[{type:'number',message:'up主id为数字',trigger:'blur'}]"
+          >
+            <el-input size="small" v-model="up.value"
+                      style="width: 180px; margin-right: 20px;"></el-input>
+            <el-button size="mini" @click.prevent="removeUp(up)">删除</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button size="mini" @click="addCustomizeUp">新增up</el-button>
+          </el-form-item>
+          <el-form-item label="投币精准匹配">
+            <el-switch @change="changeUpperAccMatch" v-model="form.upperAccMatch" active-color="#13ce66"
+                       inactive-color="#ff4949"></el-switch>
+          </el-form-item>
+        </div>
+      </el-collapse-transition>
+    </el-form>
   </div>
 </template>
 
@@ -42,25 +46,30 @@
 
 export default {
   name: "AddCoins",
-  props: ['useAddCoin', 'form'],
+  props: ['useAddCoin'],
   model: {
     prop: 'useAddCoin',
     event: 'update:useAddCoin'
   },
   data() {
     return {
-
+      form: {
+        upperAccMatch: true,
+        targetCoins: 5,
+        targetLevel: 6,
+        stayCoins: 0,
+        coinRetryNum: 4,
+        customizeUp: [{
+          value: '',
+          key: 'abc00key'
+        }],
+      },
+      config: {}
     }
   },
   methods: {
     changeUseAddCoin() {
-      const value = this.form.closeFunValues
-      if (!this.useAddCoin) {
-        value.splice(value.indexOf('addCoins'), 1)
-      } else {
-        value.push('addCoins')
-      }
-      this.$emit('update:useAddCoin', !this.useAddCoin)
+      this.$emit('update:useAddCoin', !this.useAddCoin);
     },
     addCustomizeUp() {
       this.form.customizeUp.push({
@@ -82,7 +91,11 @@ export default {
           duration: 6000
         });
       }
-    }
+    },
+    setCustomizeUp() {
+      this.config = JSON.parse(JSON.stringify(this.form));
+      this.config.customizeUp = this.form.customizeUp.map(up => up.value).filter(up => up.trim() !== '');
+    },
   }
 }
 </script>
