@@ -77,11 +77,18 @@ export default {
   methods: {
     async onSubmit() {
       this.saveDate();
-      this.$store.commit("updateMessage", this.message);
 
-      const emailValid = await this.validateForm('useEmail', 'emailForm', 'email表单未完成');
-      const serverChanValid = await this.validateForm('useServerChan', 'serverChanForm', 'serverChan表单未完成');
+      let emailValid = true, serverChanValid = true, message = {};
+      if (this.messagePush.useEmail) {
+        emailValid = await this.validateForm('useEmail', 'emailForm', 'email表单未完成');
+        message.email = this.message.email;
+      }
+      if (this.messagePush.useServerChan) {
+        serverChanValid = await this.validateForm('useServerChan', 'serverChanForm', 'serverChan表单未完成');
+        message.serverChan = this.message.serverChan;
+      }
       if (emailValid && serverChanValid) {
+        this.$store.commit("updateMessage", message);
         this.$message.success('消息配置成功')
         await this.$router.push('/users')
       }
