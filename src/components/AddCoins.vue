@@ -46,24 +46,13 @@
 
 export default {
   name: "AddCoins",
-  props: ['useAddCoin'],
+  props: ['useAddCoin', 'form'],
   model: {
     prop: 'useAddCoin',
     event: 'update:useAddCoin'
   },
   data() {
     return {
-      form: {
-        upperAccMatch: true,
-        targetCoins: 5,
-        targetLevel: 6,
-        stayCoins: 0,
-        coinRetryNum: 4,
-        customizeUp: [{
-          value: '',
-          key: 'abc00key'
-        }],
-      },
       config: {}
     }
   },

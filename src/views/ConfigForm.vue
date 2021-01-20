@@ -3,8 +3,8 @@
     <el-row>
       <el-col :span="12">
         <div class="grid-content bg-purple">
-          <tasks-manages ref="tasksManages" v-model="useAddCoin"></tasks-manages>
-          <base-config ref="baseConfig"></base-config>
+          <tasks-manages ref="tasksManages" v-model="useAddCoin" :form="form.functionConfig"></tasks-manages>
+          <base-config ref="baseConfig" :form="form.baseConfig"></base-config>
           <div style="margin-left: 140px;margin-bottom: 20px">
             <el-button type="primary" @click="onSubmit">立即创建</el-button>
             <el-button>取消</el-button>
@@ -13,9 +13,10 @@
       </el-col>
       <el-col :span="10">
         <div class="grid-content bg-purple">
-          <add-coins ref="addCoins" @update:useAddCoin="changeCloseFunction" v-model="useAddCoin"></add-coins>
-          <s-c-f-manage ref="SCFManage"></s-c-f-manage>
-          <message-push ref="messagePush"></message-push>
+          <add-coins ref="addCoins" :form="form.coinsConfig" @update:useAddCoin="changeCloseFunction"
+                     v-model="useAddCoin"></add-coins>
+          <s-c-f-manage ref="SCFManage" :form="form.slsConfig"></s-c-f-manage>
+          <message-push ref="messagePush" :message="form.message"></message-push>
         </div>
       </el-col>
     </el-row>
@@ -25,6 +26,7 @@
 </template>
 
 <script>
+import form from '@/data/form'
 
 import TasksManages from "@/components/TasksManages";
 import AddCoins from "@/components/AddCoins";
@@ -44,6 +46,7 @@ export default {
   data() {
     return {
       useAddCoin: true,
+      form,
     }
   },
   methods: {

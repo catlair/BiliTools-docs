@@ -14,47 +14,17 @@
 </template>
 
 <script>
+import functionConfig from "@/data/functionConfig";
+
 export default {
   name: "TasksManages",
-  props: ['useAddCoin'],
+  props: ['useAddCoin', 'form'],
   model: {
     prop: 'useAddCoin',
     event: 'update:useAddCoin'
   },
   data() {
     return {
-      form: {
-        allFunctions: [
-          {
-            key: 'addCoins',
-            label: '每日投币',
-          },
-          {
-            key: 'shareAndWatch',
-            label: '分享/观看视频',
-          },
-          {
-            key: 'supGroupSign',
-            label: '应援团签到',
-          }, {
-            key: 'judgement',
-            label: '风纪委员任务',
-          },
-          {
-            key: 'mangaSign',
-            label: '漫画签到'
-          },
-          {
-            key: 'silver2Coin',
-            label: '银瓜子换硬币',
-          },
-          {
-            key: 'liveSignTask',
-            label: '直播签到'
-          }
-        ],
-        closeFunValues: ['judgement'],
-      },
       config: {
         function: {}
       }
@@ -67,19 +37,11 @@ export default {
       )
     },
     setFunction() {
-      const functionConfig = {
-        "silver2Coin": true,
-        "liveSignTask": true,
-        "addCoins": true,
-        "mangaSign": true,
-        "shareAndWatch": true,
-        "supGroupSign": true,
-        "judgement": true
-      }
+      const fun = JSON.parse(JSON.stringify(functionConfig));
       this.form.closeFunValues.forEach(el => {
-        functionConfig[el] = false;
+        fun[el] = false;
       })
-      this.config.function = functionConfig
+      this.config.function = fun
     },
   },
 }

@@ -21,13 +21,9 @@
 <script>
 export default {
   name: "BaseConfig",
+  props: ['form'],
   data() {
     return {
-      form: {
-        apiDelay: [2, 6],
-        userAgent: "",
-        cookie: ''
-      },
       config: {},
       rules: {
         cookie: [
