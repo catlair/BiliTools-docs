@@ -76,8 +76,6 @@ export default {
   },
   methods: {
     async onSubmit() {
-      this.saveDate();
-
       let emailValid = true, serverChanValid = true, message = {};
       if (this.messagePush.useEmail) {
         emailValid = await this.validateForm('useEmail', 'emailForm', 'email表单未完成');
@@ -103,31 +101,7 @@ export default {
         }
       });
       return validTemp;
-    },
-    saveDate() {
-      window.localStorage.setItem('globalConfig', JSON.stringify({
-        message: this.message,
-        messagePush: this.messagePush
-      }))
-    },
-    getDate() {
-      let data = window.localStorage.getItem('globalConfig')
-      if (!data) return;
-      data = JSON.parse(data);
-      this.message = data.message;
-      this.messagePush = data.messagePush;
     }
-  },
-  mounted() {
-    this.getDate();
-    this.timer = setInterval(() => {
-      this.saveDate()
-    }, 5000)
-  },
-  beforeDestroy() {
-    this.saveDate()
-    clearInterval(this.timer)
-    console.log('销毁')
   }
 }
 </script>
