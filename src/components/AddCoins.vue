@@ -94,7 +94,7 @@ export default {
     },
     setCustomizeUp() {
       this.config = JSON.parse(JSON.stringify(this.form));
-      this.config.customizeUp = this.form.customizeUp.map(up => up.value).filter(up => up.trim() !== '');
+      this.config.customizeUp = this.form.customizeUp.map(up => up.value).filter(up => up !== '')
       let formValid = true;
       this.$refs['form'].validate((valid) => {
         if (!valid) {
