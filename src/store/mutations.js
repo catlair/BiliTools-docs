@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 export default {
     updateMessage({config}, message) {
         config.message = JSON.parse(JSON.stringify(message))
@@ -5,13 +7,16 @@ export default {
     pushAccount({config}, user) {
         config.account.push(JSON.parse(JSON.stringify(user)))
     },
+    updateAccount({config}, {data, index}) {
+        Vue.set(config.account, index, data);
+    },
     deleteAccount({config}, user) {
         let index = -1;
         const reg = `(?:^|)DedeUserID=([^;]*)(?:;|$)`;
-        config.account.forEach((el,i) => {
-          if(el.cookie?.match(reg)[1] === user.userId){
-              index = i;
-          }
+        config.account.forEach((el, i) => {
+            if (el.cookie?.match(reg)[1] === user.userId) {
+                index = i;
+            }
         })
         if (index === -1) return;
         config.account.splice(index, 1);

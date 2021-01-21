@@ -7,7 +7,6 @@
         <template slot-scope="scope">
           <el-button
               size="mini"
-              disabled
               @click="handleEdit(scope.$index, scope.row)">编辑
           </el-button>
           <el-button
@@ -24,13 +23,17 @@
       </el-col>
       <el-col :span="4">
         <div class="grid-content bg-purple">
-          <el-button type="primary" @click="onSubmit">立即创建</el-button>
+          <el-button type="primary" @click="onSubmit">压缩配置</el-button>
         </div>
       </el-col>
     </el-row>
-    <el-card v-if="gzip" style="margin:20px;" shadow="always" :body-style="{ padding: '20px',wordBreak: 'break-all'}">
-      {{ gzip }}
-    </el-card>
+    <el-input
+        type="textarea"
+        autosize
+        placeholder="这里生成Gzip/或者将Gzip输入到这里"
+        style="margin:20px;width: 90%;"
+        :value="gzip">
+    </el-input>
   </div>
 </template>
 
@@ -45,22 +48,22 @@ export default {
       gzip: ''
     }
   },
-  computed: {},
   mounted() {
     this.getUsers()
   },
   methods: {
     getUsers() {
       const account = this.$store.state.config?.account
-      this.users = account.map(el => {
+      this.users = account.map((el, index) => {
         const reg = `(?:^|)DedeUserID=([^;]*)(?:;|$)`;
         return {
-          userId: el.cookie?.match(reg)[1]
+          userId: el.cookie?.match(reg)[1],
+          index
         }
       })
     },
     handleEdit(index, row) {
-      this.$router.push(`/users/${row.userId}/edit`);
+      this.$router.push(`/users/${row.userId}/edit?index=${index}`);
     },
     handleDelete(index, row) {
       console.log(this.users[index])

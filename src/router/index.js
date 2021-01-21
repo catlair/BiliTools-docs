@@ -31,11 +31,11 @@ const routes = [
     name: 'List',
     component: UserList,
   },
-  // {
-  // path: '/users/:id/edit',
-  // name: 'Edit',
-  // component: ConfigForm,
-  // }
+  {
+    path: '/users/:id/edit',
+    name: 'Edit',
+    component: ConfigForm,
+  }
 ];
 
 const router = new VueRouter({

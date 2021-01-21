@@ -139,12 +139,12 @@ export default {
 
       let emailFormValid = true, serverChanValid = true;
       this.$refs['emailForm'].validate((valid) => {
-        if (!valid) {
+        if (!valid && this.messagePush.useEmailCustom) {
           return emailFormValid = false;
         }
       });
       this.$refs['serverChanForm'].validate((valid) => {
-        if (!valid) {
+        if (!valid && this.messagePush.useServerChanCustom) {
           return serverChanValid = false;
         }
       });

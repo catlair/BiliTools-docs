@@ -6,7 +6,7 @@
           <tasks-manages ref="tasksManages" v-model="useAddCoin" :form="form.functionConfig"></tasks-manages>
           <base-config ref="baseConfig" :form="form.baseConfig"></base-config>
           <div style="margin-left: 140px;margin-bottom: 20px">
-            <el-button type="primary" @click="onSubmit">立即创建</el-button>
+            <el-button type="primary" @click="onSubmit">{{ $route.name === 'Add' ? '立即创建' : '更新用户' }}</el-button>
             <el-button>取消</el-button>
           </div>
         </div>
@@ -26,13 +26,14 @@
 </template>
 
 <script>
-import form from '@/data/form'
-
 import TasksManages from "@/components/TasksManages";
 import AddCoins from "@/components/AddCoins";
 import SCFManage from "@/components/SCFManage";
 import MessagePush from "@/components/MessagePush";
 import BaseConfig from "@/components/BaseConfig";
+
+import data2form from "@/utils/data2form";
+import form from '@/data/form'
 
 export default {
   name: "ConfigForm",
@@ -46,7 +47,32 @@ export default {
   data() {
     return {
       useAddCoin: true,
-      form,
+      form: form(),
+      index: -1
+    }
+  },
+  created() {
+    if (this.$route.name === 'Edit') {
+      this.index = +this.$route.query.index;
+      this.form = data2form(this.$store.state.config.account[this.index], this.$store.state)
+      this.form.functionConfig.closeFunValues.includes('addCoins') && (this.useAddCoin = false)
+    }
+  },
+  mounted() {
+    if (this.$route.name !== 'Edit') return;
+    if (this.form.slsConfig.scf?.name) {
+      this.$refs.SCFManage.useSCF = true;
+    }
+    if (this.form.message === true) {
+      this.$refs.messagePush.use = true;
+      this.form.message = form().message;
+      return;
+    }
+    if (this.form.message.serverChan) {
+      this.$refs.messagePush.useServerChan = true;
+    }
+    if (this.form.message.email.from) {
+      this.$refs.messagePush.useEamil = true;
     }
   },
   methods: {
@@ -68,8 +94,15 @@ export default {
           ...this.$refs.baseConfig.config,
         };
         console.log(data)
-        this.$store.commit("pushAccount", data);
-        this.$message.success('添加账号成功')
+        if (this.$route.name === 'Edit') {
+          this.$store.commit("updateAccount", {
+            data, index: this.index
+          });
+          this.$message.success('更新账号成功')
+        } else {
+          this.$store.commit("pushAccount", data);
+          this.$message.success('添加账号成功')
+        }
         this.$router.push('/users')
       } else {
         this.$message.warning('请检查表单是否有误')

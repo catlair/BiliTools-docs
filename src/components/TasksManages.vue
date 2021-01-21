@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import functionConfig from "@/data/functionConfig";
+import functionConfig from "@/data/functionData";
 
 export default {
   name: "TasksManages",
