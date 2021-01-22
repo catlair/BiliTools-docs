@@ -10,16 +10,16 @@
         <el-submenu index="2">
           <template slot="title"><i class="el-icon-user-solid"></i> <span slot="title">用户配置</span></template>
           <el-menu-item index="2-1" @click="$router.push('/users/')">用户列表</el-menu-item>
-          <el-menu-item index="2-2" @click="$router.push('/users/add')">添加用户</el-menu-item>
+          <el-menu-item index="2-2" @click="addUser">添加用户</el-menu-item>
         </el-submenu>
       </el-menu>
 
       <el-container style="overflow: auto">
         <el-header style="text-align: right; font-size: 18px;margin-bottom: 30px">
         </el-header>
-<!--        <keep-alive>-->
-          <router-view></router-view>
-<!--        </keep-alive>-->
+        <!--        <keep-alive>-->
+        <router-view></router-view>
+        <!--        </keep-alive>-->
       </el-container>
     </el-container>
   </div>
@@ -28,6 +28,13 @@
 
 export default {
   name: 'app',
+  methods: {
+    addUser() {
+      const index = this.$store.state.account.length
+      console.log(this.$store.state.account.length)
+      this.$router.push(`/users/add/${index}`);
+    }
+  }
 };
 </script>
 
@@ -47,7 +54,7 @@ body, html {
 .el-header {
   background-color: #B3C0D1;
   color: #333;
-  height: 0!important;
+  height: 0 !important;
 }
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {

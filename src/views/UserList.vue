@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import gzip from '@/utils/gzip'
+// import gzip from '@/utils/gzip'
 
 export default {
   name: "UserList",
@@ -53,11 +53,11 @@ export default {
   },
   methods: {
     getUsers() {
-      const account = this.$store.state.config?.account
+      const account = this.$store.state.account
       this.users = account.map((el, index) => {
         const reg = `(?:^|)DedeUserID=([^;]*)(?:;|$)`;
         return {
-          userId: el.cookie?.match(reg)[1],
+          userId: el.baseConfig.cookie.match(reg)?.[1] || '未配置',
           index
         }
       })
@@ -71,14 +71,7 @@ export default {
       this.getUsers();
     },
     onSubmit() {
-      const config = this.$store.state.config;
-      const configString = JSON.stringify(config);
-      const gzipString = gzip.gzipEncode(configString);
-      console.log(gzipString);
-      console.log(configString);
-      console.log(config)
-      this.$message.success('生成成功,按f12在控制台获取')
-      this.gzip = gzipString
+
     }
   }
 }

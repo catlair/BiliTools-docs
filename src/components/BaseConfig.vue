@@ -21,10 +21,10 @@
 <script>
 export default {
   name: "BaseConfig",
-  props: ['form'],
   data() {
     return {
-      config: {},
+      form: {},
+      index: -1,
       rules: {
         cookie: [
           {required: true, message: '授权登录必须内容', trigger: 'blur'},
@@ -35,19 +35,25 @@ export default {
       }
     }
   },
+  created() {
+    this.index = this.$route.params.index;
+    this.form = JSON.parse(JSON.stringify(this.$store.state.account[this.index].baseConfig))
+  },
   methods: {
     getUserAgent() {
       this.form.userAgent = window.navigator.userAgent;
-    },
-    setBaseConfig() {
-      this.config = JSON.parse(JSON.stringify(this.form))
-      let formValid = true;
-      this.$refs['form'].validate((valid) => {
-        if (!valid) {
-          return formValid = false;
-        }
-      });
-      return formValid
+    }
+  },
+  watch: {
+    form: {
+      handler(value) {
+        this.$store.commit('update', {
+          i: this.index,
+          k: 'baseConfig',
+          value,
+        })
+      },
+      deep: true
     }
   }
 }

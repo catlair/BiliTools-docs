@@ -14,7 +14,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    redirect: '/common/message',
+    redirect: '/users',
   },
   {
     path: '/common/message',
@@ -22,7 +22,7 @@ const routes = [
     component: BaseMessagePush,
   },
   {
-    path: '/users/add',
+    path: '/users/add/:index',
     name: 'Add',
     component: ConfigForm,
   },

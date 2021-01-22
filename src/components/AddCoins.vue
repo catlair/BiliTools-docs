@@ -2,7 +2,7 @@
   <div>
     <el-form ref="form" :model="form" label-width="140px">
       <el-form-item label="投币功能">
-        <el-switch @change="changeUseAddCoin" :value="useAddCoin"></el-switch>
+        <el-switch v-model="useAddCoin"></el-switch>
       </el-form-item>
       <el-collapse-transition>
         <div v-show="useAddCoin">
@@ -46,20 +46,56 @@
 
 export default {
   name: "AddCoins",
-  props: ['useAddCoin', 'form'],
-  model: {
-    prop: 'useAddCoin',
-    event: 'update:useAddCoin'
-  },
   data() {
     return {
-      config: {}
+      index: -1,
+      form: {}
+    }
+  },
+  created() {
+    this.index = this.$route.params.index;
+    this.form = JSON.parse(JSON.stringify(this.$store.state.account[this.index].coinsConfig))
+  },
+  computed: {
+    useAddCoin: {
+      get() {
+        return this.$store.state.account[this.index].switch.addCoins
+      },
+      set(close) {
+        this.$store.commit('switch', {i: this.index, v: close, k: 'addCoins'});
+        const closeFunValues = this.$store.state.account[this.index].closeFunValues,
+            addCoinsIndex = closeFunValues.indexOf('addCoins');
+        if (close && addCoinsIndex !== -1) {
+          closeFunValues.splice(addCoinsIndex, 1);
+          this.$store.commit('update', {
+            i: this.index,
+            v: closeFunValues,
+            k: 'closeFunValues'
+          });
+        } else {
+          closeFunValues.push('addCoins')
+          this.$store.commit('update', {
+            i: this.index,
+            v: closeFunValues,
+            k: 'closeFunValues'
+          });
+        }
+      }
+    }
+  },
+  watch: {
+    form: {
+      handler(value) {
+        this.$store.commit('update', {
+          i: this.index,
+          k: 'coinsConfig',
+          value,
+        })
+      },
+      deep: true
     }
   },
   methods: {
-    changeUseAddCoin() {
-      this.$emit('update:useAddCoin', !this.useAddCoin);
-    },
     addCustomizeUp() {
       this.form.customizeUp.push({
         value: '',
@@ -80,17 +116,6 @@ export default {
           duration: 6000
         });
       }
-    },
-    setCustomizeUp() {
-      this.config = JSON.parse(JSON.stringify(this.form));
-      this.config.customizeUp = this.form.customizeUp.map(up => up.value).filter(up => up !== '')
-      let formValid = true;
-      this.$refs['form'].validate((valid) => {
-        if (!valid) {
-          return formValid = false;
-        }
-      });
-      return formValid
     }
   }
 }

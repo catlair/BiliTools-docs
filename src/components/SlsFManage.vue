@@ -45,12 +45,10 @@ import region from '@/data/scf-region'
 
 export default {
   name: "SCFManage",
-  props: ['form'],
   data() {
     return {
       region,
-      useSCF: false,
-      config: {dailyRunTime: '', sls: {}},
+      form: {},
       rules: {
         name: [
           {required: true, message: '用于区分和识别函数', trigger: 'blur'},
@@ -61,22 +59,31 @@ export default {
       nullRules: {}
     }
   },
-  methods: {
-    setSCF() {
-      this.config.dailyRunTime = this.form.dailyRunTime[0] + '-' + this.form.dailyRunTime[1]
-      if (!this.useSCF) {
-        this.config.sls = null;
-        return true;
+  computed: {
+    useSCF: {
+      get() {
+        return this.$store.state.account[this.index].switch.scf
+      },
+      set(v) {
+        this.$store.commit('switch', {i: this.index, v, k: 'scf'})
       }
-      this.config.sls = JSON.parse(JSON.stringify(this.form.scf));
-      let formValid = true;
-      this.$refs['form'].validate((valid) => {
-        if (!valid) {
-          return formValid = false;
-        }
-      });
-      return formValid;
-    },
+    }
+  },
+  created() {
+    this.index = this.$route.params.index;
+    this.form = JSON.parse(JSON.stringify(this.$store.state.account[this.index].slsConfig))
+  },
+  watch: {
+    form: {
+      handler(value) {
+        this.$store.commit('update', {
+          i: this.index,
+          k: 'slsConfig',
+          value,
+        })
+      },
+      deep: true
+    }
   }
 }
 </script>
