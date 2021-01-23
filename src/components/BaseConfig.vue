@@ -21,10 +21,10 @@
 <script>
 export default {
   name: "BaseConfig",
+  props: ['saveKey'],
   data() {
     return {
       form: {},
-      index: -1,
       rules: {
         cookie: [
           {required: true, message: '授权登录必须内容', trigger: 'blur'},
@@ -36,21 +36,29 @@ export default {
     }
   },
   created() {
-    this.index = this.$route.params.index;
-    this.form = JSON.parse(JSON.stringify(this.$store.state.account[this.index].baseConfig))
+    this.form = JSON.parse(JSON.stringify(this.$store.state.temp[this.saveKey].baseConfig))
   },
   methods: {
     getUserAgent() {
       this.form.userAgent = window.navigator.userAgent;
+    },
+    validForm() {
+      let formValid = true;
+      this.$refs['form'].validate((valid) => {
+        if (!valid) {
+          return formValid = false;
+        }
+      });
+      return formValid
     }
   },
   watch: {
     form: {
       handler(value) {
         this.$store.commit('update', {
-          i: this.index,
           k: 'baseConfig',
           value,
+          saveKey: this.saveKey
         })
       },
       deep: true

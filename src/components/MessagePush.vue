@@ -70,6 +70,7 @@
 <script>
 export default {
   name: "MessagePush",
+  props: ['saveKey'],
   data() {
     return {
       message: {},
@@ -85,9 +86,8 @@ export default {
     }
   },
   created() {
-    this.index = this.$route.params.index;
-    this.message = JSON.parse(JSON.stringify(this.$store.state.account[this.index].message))
-    this.messagePush = JSON.parse(JSON.stringify(this.$store.state.account[this.index].switch.message))
+    this.message = JSON.parse(JSON.stringify(this.$store.state.temp[this.saveKey].message))
+    this.messagePush = JSON.parse(JSON.stringify(this.$store.state.temp[this.saveKey].switch.message))
   },
   methods: {
     changeMessageEmail() {
@@ -120,15 +120,30 @@ export default {
           }
         })
       }
+    },
+    validForm() {
+      if (!this.$store.state.temp[this.saveKey].switch.message.use) return true;
+      let emailFormValid = true, serverChanValid = true;
+      this.$refs['emailForm'].validate((valid) => {
+        if (!valid && this.messagePush.email.custom) {
+          return emailFormValid = false;
+        }
+      });
+      this.$refs['serverChanForm'].validate((valid) => {
+        if (!valid && this.messagePush.serverChan.custom) {
+          return serverChanValid = false;
+        }
+      });
+      return emailFormValid && serverChanValid
     }
   },
   watch: {
     messagePush: {
       handler(value) {
         this.$store.commit('switch', {
-          i: this.index,
           k: 'message',
           value,
+          saveKey: this.saveKey
         })
       },
       deep: true
@@ -136,9 +151,9 @@ export default {
     message: {
       handler(value) {
         this.$store.commit('update', {
-          i: this.index,
           k: 'message',
           value,
+          saveKey: this.saveKey
         })
       },
       deep: true

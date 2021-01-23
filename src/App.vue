@@ -17,21 +17,23 @@
       <el-container style="overflow: auto">
         <el-header style="text-align: right; font-size: 18px;margin-bottom: 30px">
         </el-header>
-        <!--        <keep-alive>-->
-        <router-view></router-view>
-        <!--        </keep-alive>-->
+          <router-view :key="$route.path"></router-view>
       </el-container>
     </el-container>
   </div>
 </template>
 <script>
 
+import {mapState} from "vuex";
+
 export default {
   name: 'app',
+  computed: {
+    ...mapState(['account'])
+  },
   methods: {
     addUser() {
-      const index = this.$store.state.account.length
-      console.log(this.$store.state.account.length)
+      const index = Object.keys(this.account).length
       this.$router.push(`/users/add/${index}`);
     }
   }

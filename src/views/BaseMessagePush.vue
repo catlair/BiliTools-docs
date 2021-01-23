@@ -2,7 +2,7 @@
   <div class="base-message-push">
     <el-form ref="emailForm" :model="message.email" :rules="rules" label-width="140px">
       <el-form-item label="使用邮箱推送">
-        <el-switch v-model.trim="messagePush.useEmail"></el-switch>
+        <el-switch v-model="useEmail"></el-switch>
       </el-form-item>
       <el-form-item label="发件邮箱" prop="from">
         <el-input type="email" placeholder="from email"
@@ -26,7 +26,7 @@
     <el-divider></el-divider>
     <el-form ref="serverChanForm" :model="message" :rules="rules" label-width="140px">
       <el-form-item label="使用server酱">
-        <el-switch v-model.trim="messagePush.useServerChan"></el-switch>
+        <el-switch v-model="useServerChan"></el-switch>
       </el-form-item>
       <el-form-item label="server酱" prop="serverChan">
         <el-input
@@ -49,21 +49,7 @@ export default {
   data() {
     return {
       nullRules: {},
-      timer: null,
-      messagePush: {
-        useEmail: false,
-        useServerChan: false,
-      },
-      message: {
-        email: {
-          from: '',
-          to: '',
-          pass: '',
-          host: '',
-          port: 465
-        },
-        serverChan: ''
-      },
+      message: {},
       rules: {
         from: [{required: true, type: 'email', message: '邮箱格式不正确', trigger: 'blur'}],
         pass: [{required: true, message: '授权码不能为空', trigger: 'blur'}],
@@ -74,25 +60,52 @@ export default {
       }
     }
   },
+  created() {
+    this.message = Object.copy(this.$store.state.temp.message.form);
+  },
+  computed: {
+    useEmail: {
+      get() {
+        return this.$store.state.temp.message.switch.email
+      },
+      set(v) {
+        this.$store.commit('switchMessage', {
+          k: 'email',
+          v
+        })
+      }
+    },
+    useServerChan: {
+      get() {
+        return this.$store.state.temp.message.switch.serverChan
+      },
+      set(value) {
+        this.$store.commit('switchMessage', {
+          k: 'serverChan',
+          value
+        })
+      }
+    }
+  },
   methods: {
     async onSubmit() {
       let emailValid = true, serverChanValid = true, message = {};
-      if (this.messagePush.useEmail) {
+      if (this.useEmail) {
         emailValid = await this.validateForm('useEmail', 'emailForm', 'email表单未完成');
         message.email = this.message.email;
       }
-      if (this.messagePush.useServerChan) {
+      if (this.useServerChan) {
         serverChanValid = await this.validateForm('useServerChan', 'serverChanForm', 'serverChan表单未完成');
         message.serverChan = this.message.serverChan;
       }
       if (emailValid && serverChanValid) {
-        this.$store.commit("updateMessage", message);
         this.$message.success('消息配置成功')
+        await this.$store.commit('saveMessage')
         await this.$router.push('/users')
       }
     },
     validateForm(useName, formName, warning) {
-      if (!this.messagePush[useName]) return true;
+      if (!this[useName]) return true;
       let validTemp = true;
       this.$refs[formName].validate((valid) => {
         if (!valid) {
@@ -101,6 +114,14 @@ export default {
         }
       });
       return validTemp;
+    }
+  },
+  watch: {
+    message: {
+      handler(value) {
+        this.$store.commit('updateMessage', value)
+      },
+      deep: true
     }
   }
 }

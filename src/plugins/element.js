@@ -15,16 +15,13 @@ import {
     Option,
     Select,
     Container,
-    Aside,
     Submenu,
     Menu,
     MenuItemGroup,
     MenuItem,
     Notification,
     Header,
-    // Dropdown,
-    // DropdownItem,
-    // DropdownMenu,
+    MessageBox,
     Divider, Table, TableColumn, Card, Message
 } from 'element-ui';
 
@@ -35,6 +32,7 @@ Vue.component('el-collapse-transition', CollapseTransition)
 // Vue.prototype.$ELEMENT = { size: 'mini', zIndex: 3000 };
 Vue.prototype.$notify = Notification
 Vue.prototype.$message = Message
+Vue.prototype.$alert = MessageBox.alert
 
 Vue.use(Button);
 Vue.use(TimePicker);

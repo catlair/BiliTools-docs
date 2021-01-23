@@ -15,5 +15,6 @@ export default new Vuex.Store({
     actions,
     plugins: [createPersistedState({
         key: 'config_data'
-    })]
+    })],
+    strict: process.env.NODE_ENV !== 'production'
 })

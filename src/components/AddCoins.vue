@@ -46,38 +46,37 @@
 
 export default {
   name: "AddCoins",
+  props: ['saveKey'],
   data() {
     return {
-      index: -1,
       form: {}
     }
   },
   created() {
-    this.index = this.$route.params.index;
-    this.form = JSON.parse(JSON.stringify(this.$store.state.account[this.index].coinsConfig))
+    this.form = JSON.parse(JSON.stringify(this.$store.state.temp[this.saveKey].coinsConfig))
   },
   computed: {
     useAddCoin: {
       get() {
-        return this.$store.state.account[this.index].switch.addCoins
+        return this.$store.state.temp[this.saveKey].switch.addCoins
       },
       set(close) {
-        this.$store.commit('switch', {i: this.index, v: close, k: 'addCoins'});
-        const closeFunValues = this.$store.state.account[this.index].closeFunValues,
+        this.$store.commit('switch', {v: close, k: 'addCoins', saveKey: this.saveKey});
+        const closeFunValues = Object.copy(this.$store.state.temp[this.saveKey].closeFunValues),
             addCoinsIndex = closeFunValues.indexOf('addCoins');
         if (close && addCoinsIndex !== -1) {
           closeFunValues.splice(addCoinsIndex, 1);
           this.$store.commit('update', {
-            i: this.index,
             v: closeFunValues,
-            k: 'closeFunValues'
+            k: 'closeFunValues',
+            saveKey: this.saveKey
           });
         } else {
           closeFunValues.push('addCoins')
           this.$store.commit('update', {
-            i: this.index,
             v: closeFunValues,
-            k: 'closeFunValues'
+            k: 'closeFunValues',
+            saveKey: this.saveKey
           });
         }
       }
@@ -87,9 +86,9 @@ export default {
     form: {
       handler(value) {
         this.$store.commit('update', {
-          i: this.index,
           k: 'coinsConfig',
           value,
+          saveKey: this.saveKey
         })
       },
       deep: true
@@ -116,6 +115,16 @@ export default {
           duration: 6000
         });
       }
+    },
+    validForm() {
+      if (!this.$store.state.temp[this.saveKey].switch.addCoins) return true;
+      let formValid = true;
+      this.$refs['form'].validate((valid) => {
+        if (!valid) {
+          return formValid = false;
+        }
+      });
+      return formValid
     }
   }
 }

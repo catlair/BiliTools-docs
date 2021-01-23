@@ -45,6 +45,7 @@ import region from '@/data/scf-region'
 
 export default {
   name: "SCFManage",
+  props: ['saveKey'],
   data() {
     return {
       region,
@@ -62,24 +63,34 @@ export default {
   computed: {
     useSCF: {
       get() {
-        return this.$store.state.account[this.index].switch.scf
+        return this.$store.state.temp[this.saveKey].switch.scf
       },
       set(v) {
-        this.$store.commit('switch', {i: this.index, v, k: 'scf'})
+        this.$store.commit('switch', {v, k: 'scf', saveKey: this.saveKey})
       }
     }
   },
   created() {
-    this.index = this.$route.params.index;
-    this.form = JSON.parse(JSON.stringify(this.$store.state.account[this.index].slsConfig))
+    this.form = Object.copy(this.$store.state.temp[this.saveKey].slsConfig)
+  },
+  methods: {
+    validForm() {
+      let formValid = true;
+      this.$refs['form'].validate((valid) => {
+        if (!valid) {
+          return formValid = false;
+        }
+      });
+      return formValid;
+    }
   },
   watch: {
     form: {
       handler(value) {
         this.$store.commit('update', {
-          i: this.index,
           k: 'slsConfig',
           value,
+          saveKey: this.saveKey
         })
       },
       deep: true

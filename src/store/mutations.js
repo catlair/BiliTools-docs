@@ -1,20 +1,46 @@
 import Vue from 'vue'
+import {createTemplate} from "@/data/form";
 
 export default {
-    update({account}, payload) {
-        const key = payload.key || payload.k;
-        const value = payload.value || payload.v;
-        const index = payload.index || payload.i;
-        account[index][key] = value;
+    update({temp}, payload) {
+        const key = payload.key || payload.k,
+            value = payload.value || payload.v;
+        temp[payload.saveKey][key] = Object.copy(value);
     },
-    switch({account}, payload) {
-        const key = payload.key || payload.k;
-        const value = payload.value || payload.v;
-        const index = payload.index || payload.i;
-        account[index].switch[key] = value;
+    switch({temp}, payload) {
+        const key = payload.key || payload.k,
+            value = payload.value || payload.v;
+        temp[payload.saveKey].switch[key] = Object.copy(value);
     },
-    addUser({account, template}, {user, index}) {
-        if (user) template = user;
-        Vue.set(account, index, JSON.parse(JSON.stringify(template)))
+    switchMessage({temp}, payload) {
+        const key = payload.key || payload.k;
+        temp.message.switch[key] = payload.value || payload.v;
+    },
+    updateMessage({temp}, payload) {
+        Vue.set(temp.message, 'form', Object.copy(payload))
+    },
+    saveMessage(state) {
+        Vue.set(state, 'message', Object.copy(state.temp.message))
+    },
+    addAccount({account, temp}, {userId}) {
+        Vue.set(account, userId, temp.createAccount)
+        Vue.set(temp, 'createAccount', createTemplate())
+    },
+    deleteAccount({account, temp}, {userId}) {
+        Vue.delete(account, userId)
+        Vue.delete(temp, userId)
+    },
+    updateAccount({account, temp}, {userId}) {
+        Vue.set(account, userId, temp[userId])
+        Vue.delete(temp, userId)
+    },
+    copyToUpdate({temp, account}, {userId}) {
+        Vue.set(temp, userId, Object.copy(account[userId]))
+    },
+    cancelCreateAccount({temp}) {
+        Vue.set(temp, 'createAccount', createTemplate())
+    },
+    cancelUpdateAccount({temp, account}, {userId}) {
+        Vue.set(temp, userId, Object.copy(account[userId]))
     }
 }

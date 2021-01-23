@@ -40,6 +40,8 @@
 <script>
 // import gzip from '@/utils/gzip'
 
+import {mapState} from "vuex";
+
 export default {
   name: "UserList",
   data() {
@@ -51,23 +53,24 @@ export default {
   mounted() {
     this.getUsers()
   },
+  computed: {
+    ...mapState(['temp', 'account'])
+  },
   methods: {
     getUsers() {
-      const account = this.$store.state.account
-      this.users = account.map((el, index) => {
-        const reg = `(?:^|)DedeUserID=([^;]*)(?:;|$)`;
-        return {
-          userId: el.baseConfig.cookie.match(reg)?.[1] || '未配置',
-          index
-        }
-      })
+      this.users = Object.keys(this.account).map(userId => ({userId}))
     },
     handleEdit(index, row) {
-      this.$router.push(`/users/${row.userId}/edit?index=${index}`);
+      if (this.temp[row.userId]) {
+        this.$message.info('检查到未保存的历史记录')
+      } else {
+        this.$store.commit('copyToUpdate', {userId: row.userId})
+      }
+      this.$router.push(`/users/${row.userId}/edit`);
     },
     handleDelete(index, row) {
       console.log(this.users[index])
-      this.$store.commit("deleteAccount", this.users[index]);
+      this.$store.commit("deleteAccount", {userId: row.userId});
       this.getUsers();
     },
     onSubmit() {

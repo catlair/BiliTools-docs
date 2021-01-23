@@ -1,4 +1,4 @@
-export default function () {
+export default function form() {
     return {
         slsConfig: {
             scf: {
@@ -36,5 +36,26 @@ export default function () {
                 key: 'abc00key'
             }]
         },
+    }
+}
+
+export function createTemplate() {
+    return {
+        ...form(),
+        switch: {
+            addCoins: true,
+            scf: false,
+            message: {
+                use: false,
+                email: {
+                    use: false,
+                    custom: false
+                },
+                serverChan: {
+                    use: false,
+                    custom: false
+                }
+            }
+        }
     }
 }
