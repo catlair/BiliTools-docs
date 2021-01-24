@@ -46,15 +46,16 @@ export function createTemplate() {
             addCoins: true,
             scf: false,
             message: {
+              use: false,
+              custom: false,
+              email: {
                 use: false,
-                email: {
-                    use: false,
-                    custom: false
-                },
-                serverChan: {
-                    use: false,
-                    custom: false
-                }
+                custom: false
+              },
+              serverChan: {
+                use: false,
+                custom: false
+              }
             }
         }
     }

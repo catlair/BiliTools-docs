@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import BaseMessagePush from '@/views/BaseMessagePush';
 import ConfigForm from '@/views/ConfigForm';
 import UserList from '@/views/UserList';
+import DataFormat from "@/views/DataFormat";
 
 Vue.use(VueRouter);
 const originalPush = VueRouter.prototype.push;
@@ -35,6 +36,11 @@ const routes = [
     path: '/users/:id/edit',
     name: 'Edit',
     component: ConfigForm,
+  },
+  {
+    path: '/data/format',
+    name: 'Format',
+    component: DataFormat,
   }
 ];
 

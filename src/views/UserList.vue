@@ -32,7 +32,7 @@
         autosize
         placeholder="这里生成Gzip/或者将Gzip输入到这里"
         style="margin:20px;width: 90%;"
-        :value="gzip">
+        v-model="gzip">
     </el-input>
   </div>
 </template>
@@ -48,7 +48,8 @@ export default {
   data() {
     return {
       users: [],
-      gzip: ''
+      gzip: '',
+      test: ''
     }
   },
   mounted() {
@@ -75,7 +76,15 @@ export default {
       this.getUsers();
     },
     onSubmit() {
-      const data = form2data(this.$store.state.account, this.$store.state.message)
+      const account = this.$store.state.account,
+          message = this.$store.state.message;
+      if (Object.isEmpty(message))
+        if (Object.isEmpty(account)) {
+          this.$message.error('没有任何内容需要压缩')
+          return;
+        }
+      const data = form2data(account, message)
+      console.log(data)
       this.gzip = gzip.gzipEncode(JSON.stringify(data));
     }
   }

@@ -14,7 +14,7 @@ export default new Vuex.Store({
     mutations,
     actions,
     plugins: [createPersistedState({
-        key: 'config_data'
+        key: 'bili_tools_config'
     })],
     strict: process.env.NODE_ENV !== 'production'
 })

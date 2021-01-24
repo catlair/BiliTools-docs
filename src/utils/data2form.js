@@ -1,83 +1,155 @@
 import functionData from "@/data/functionData";
 import form from "@/data/form";
+import {getUserId} from "@/utils/index";
 
-function getSlsDailyRunTime(dailyRunTime) {
-    if (!dailyRunTime) return form().slsConfig.dailyRunTime;
-    return dailyRunTime.split('-');
+function setDailyRunTime(dailyRunTime) {
+  if (!dailyRunTime) return form().slsConfig.dailyRunTime;
+  return dailyRunTime.split('-');
 }
 
-function getFunctionConfig(data) {
-    return Object.keys(functionData).filter(key => !data[key])
+function setFunctionsOption(data, control) {
+  const closeFunValues = Object.keys(functionData).filter(key => !data[key])
+  control.addCoins = !closeFunValues.includes('addCoins');
+  return closeFunValues
 }
 
-function getCustomizeUp(customizeUp) {
-    const customizeUpArray = []
-    for (const upNumber of customizeUp) {
-        customizeUp.push({
-            value: upNumber,
-            key: Date.now()
-        })
+function setCustomizeUp(customizeUp) {
+  let customizeUpArray = [];
+  if (!customizeUp.length) {
+    customizeUpArray = form().coinsConfig.customizeUp;
+  }
+  for (const upNumber of customizeUp) {
+    customizeUpArray.push({
+      value: Number(upNumber),
+      key: Date.now().toString()
+    })
+  }
+  return customizeUpArray;
+}
+
+function setSlsOption(sls, control) {
+  if (sls && sls.name) {
+    control['scf'] = true;
+    return Object.copy(sls)
+  }
+  control.scf = false;
+  return form().slsConfig.scf;
+}
+
+function setAccountMessage(message, control) {
+  const tempMessage = Object.copy(form().message),
+    baseMessage = Object.copy(form().message),
+    base = Object.keys(baseMessage);
+
+  //初始化switch
+  control.use = false;
+  control.custom = false;
+  base.forEach(el => {
+    const item = control[el] = {}
+    item.use = false;
+    item.custom = false;
+  })
+
+  if (!message || Object.isEmpty(message)) return baseMessage;
+
+  control.use = true;
+
+  let useCount = 0;
+
+  base.forEach(el => {
+    const item = message[el]
+    if (!item || Object.isEmpty(item)) return;
+    //使用
+    control[el].use = true;
+    if (item === true) {
+      useCount++;
+      return;
     }
-    return customizeUpArray;
+    //自定义
+    control.custom = true;
+    control[el].custom = true;
+    tempMessage[el] = item;
+  })
+
+  //临时解决
+  if (useCount > 0 && useCount < base.length) control.custom = true;
+
+  return tempMessage;
 }
 
-function getSLS(sls) {
-    if (sls) return JSON.parse(JSON.stringify(sls));
-    return form().slsConfig.scf;
+function setAccountOne(account, userIdArray) {
+  const control = {
+      message: {}
+    },
+    {
+      apiDelay,
+      userAgent,
+      cookie,
+      stayCoins,
+      targetCoins,
+      targetLevel,
+      coinRetryNum,
+      upperAccMatch
+    } = account;
+
+  userIdArray.push(getUserId(cookie));
+
+  return {
+    switch: control,
+    slsConfig: {
+      scf: setSlsOption(account.sls, control),
+      dailyRunTime: setDailyRunTime(account.dailyRunTime)
+    },
+    message: setAccountMessage(account.message, control.message),
+    closeFunValues: setFunctionsOption(account.function, control),
+    baseConfig: {
+      apiDelay,
+      userAgent,
+      cookie,
+    },
+    coinsConfig: {
+      stayCoins,
+      targetCoins,
+      targetLevel,
+      coinRetryNum,
+      upperAccMatch,
+      customizeUp: setCustomizeUp(account.customizeUp)
+    },
+  }
 }
 
-function getMessage(message, state) {
-    const srcMsg = form().message;
-    if (!message) return srcMsg;
-    if (message === true) return state.message || srcMsg;
-    const temp = {};
-    temp.email = message.email ? message.email : srcMsg.email;
-    if (message.serverChan === true) {
-        temp.serverChan = srcMsg.serverChan
-        return temp;
-    }
-    temp.serverChan = message.serverChan || '';
-    return temp;
+function setMessageData(message) {
+  const tempMessage = {
+    form: message,
+    switch: {}
+  }
+
+  //form().message是最全的
+  Object.keys(form().message).forEach(el => {
+    tempMessage.switch[el] = Boolean(message[el]);
+  })
+
+  //邮箱的from没有,不可能开启邮箱
+  if (!message.email || !message.email.from) {
+    tempMessage.switch.email = false;
+  }
+
+  return tempMessage;
 }
 
-export default function (data, state) {
-    const {
-        apiDelay,
-        userAgent,
-        cookie,
-        stayCoins,
-        targetCoins,
-        targetLevel,
-        coinRetryNum,
-        upperAccMatch,
-        message,
-        sls,
-        function: fun, //当初为啥用关键字
-        customizeUp
-    } = data;
+function setAccountData(account) {
+  const tempAccount = {},
+    userIdArray = [],
+    array = account.map(user => setAccountOne(user, userIdArray))
+  for (let i = 0; i < array.length; i++) {
+    tempAccount[userIdArray[i]] = Object.copy(array[i]);
+  }
+  return tempAccount
+}
 
-    return {
-        slsConfig: {
-            scf: getSLS(sls),
-            dailyRunTime: getSlsDailyRunTime(data.sls?.dailyRunTime)
-        },
-        message: getMessage(message, state),
-        functionConfig: {
-            allFunctions: form().functionConfig.allFunctions,
-            closeFunValues: getFunctionConfig(fun)
-        },
-        baseConfig: {
-            apiDelay,
-            userAgent,
-            cookie
-        },
-        coinsConfig: {
-            stayCoins,
-            targetCoins,
-            targetLevel,
-            coinRetryNum,
-            upperAccMatch,
-            customizeUp: getCustomizeUp(customizeUp)
-        }
-    }
+export default function (config) {
+  return Object.copy({
+    account: setAccountData(config.account),
+    message: setMessageData(config.message)
+  })
 }

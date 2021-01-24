@@ -10,7 +10,7 @@ const gzipEncode = (str) => {
     try {
         return btoa(pako.gzip(escape(str), {to: 'string'}));
     } catch (e) {
-        return 'Error: 当前字符串不能被Gzip加密';
+        // return 'Error: 当前字符串不能被Gzip加密';
     }
 };
 
@@ -32,7 +32,7 @@ const gzipDecode = (str) => {
             return result;
         }
     } catch (e) {
-        throw new Error('Error: 当前字符串不能被Gzip解密');
+        // throw new Error('Error: 当前字符串不能被Gzip解密');
     }
 };
 

@@ -21,28 +21,24 @@ function getCustomizeUp(customizeUp) {
 }
 
 function getAccountMessage(account) {
-    const message = account.message,
-        control = account.switch.message;
-    if (!control.use) return false;
+  const message = account.message,
+    control = account.switch.message;
+  if (!control.use) return false;
 
-    const useEmailCustom = control.email.custom,
-        useServerChanCustom = control.serverChan.custom;
-    if (useEmailCustom && useServerChanCustom) {
-        return message;
-    }
+  if (!control.custom) return true;
 
-    if (!useEmailCustom && !useServerChanCustom)
-        if (control.email.use && control.serverChan.use)
-            return true;
+  const tempMessage = {};
 
-    const tempMessage = {};
-    if (useEmailCustom) {
-        tempMessage.email = message.email;
+  Object.keys(message).forEach(el => {
+    if (!control[el].use) return;
+    if (control[el].custom) {
+      tempMessage[el] = message[el];
+      return;
     }
-    if (useServerChanCustom) {
-        tempMessage.serverChan = message.serverChan;
-    }
-    return tempMessage;
+    tempMessage[el] = true;
+  })
+
+  return tempMessage;
 }
 
 function getAccountOne(account) {
@@ -59,6 +55,7 @@ function getAccountOne(account) {
 }
 
 function getMessageData(message) {
+  if (Object.isEmpty(message)) return null;
     const {form, switch: control} = message,
         tempMessage = {};
     Object.keys(control).forEach(el => {

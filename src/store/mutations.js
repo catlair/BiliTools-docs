@@ -32,15 +32,20 @@ export default {
     },
     updateAccount({account, temp}, {userId}) {
         Vue.set(account, userId, temp[userId])
-        Vue.delete(temp, userId)
+      Vue.delete(temp, userId)
     },
-    copyToUpdate({temp, account}, {userId}) {
-        Vue.set(temp, userId, Object.copy(account[userId]))
-    },
-    cancelCreateAccount({temp}) {
-        Vue.set(temp, 'createAccount', createTemplate())
-    },
-    cancelUpdateAccount({temp, account}, {userId}) {
-        Vue.set(temp, userId, Object.copy(account[userId]))
-    }
+  copyToUpdate({temp, account}, {userId}) {
+    Vue.set(temp, userId, Object.copy(account[userId]))
+  },
+  cancelCreateAccount({temp}) {
+    Vue.set(temp, 'createAccount', createTemplate())
+  },
+  cancelUpdateAccount({temp, account}, {userId}) {
+    Vue.set(temp, userId, Object.copy(account[userId]))
+  },
+  restoreForm(state, payload) {
+    Vue.set(state, 'account', payload.account)
+    Vue.set(state, 'message', payload.message)
+    Vue.set(state.temp, 'message', payload.message)
+  }
 }

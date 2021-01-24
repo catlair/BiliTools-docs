@@ -2,10 +2,14 @@
   <div class="message-push">
     <el-form ref="emailForm" :model="message.email" :rules="rules" label-width="140px">
       <el-form-item label="使用消息推送">
-        <el-switch @change="changeMessageUse" v-model="messagePush.use"></el-switch>
+        <el-switch v-model="messagePush.use"></el-switch>
+        <div v-show="messagePush.use" style="display: inline-block;margin-left: 60px">
+          自定义设置
+          <el-switch @change="changeMessageCustom" v-model="messagePush.custom" active-color="#13ce66"></el-switch>
+        </div>
       </el-form-item>
       <el-collapse-transition>
-        <div v-show="messagePush.use">
+        <div v-show="messagePush.use && messagePush.custom">
           <el-form-item label-width="20px">
             <el-form-item label="email">
               <el-switch @change="changeMessageEmail" v-model="messagePush.email.use"
@@ -40,7 +44,7 @@
         </div>
       </el-collapse-transition>
     </el-form>
-    <div v-show="messagePush.use">
+    <div v-show="messagePush.use && messagePush.custom">
       <el-form ref="serverChanForm" :model="message" :rules="rules" label-width="160px">
         <el-form-item label="server酱">
           <el-switch @change="changeMessageServerChan" v-model="messagePush.serverChan.use"
@@ -95,13 +99,13 @@ export default {
       if (this.messagePush.email.use) return;
       this.messagePush.email.custom = false
       if (!this.messagePush.serverChan.use) {
-        this.messagePush.use = false;
+        this.messagePush.custom = false;
       }
     },
     changeMessageServerChan() {
       if (this.messagePush.serverChan.use) return;
       this.messagePush.serverChan.custom = false
-      if (!this.messagePush.email.use) this.messagePush.use = false;
+      if (!this.messagePush.email.use) this.messagePush.custom = false;
     },
     changeMsgEmailCustom() {
       this.messagePush.email.custom && (this.messagePush.email.use = true)
@@ -110,7 +114,7 @@ export default {
       this.messagePush.serverChan.custom && (this.messagePush.serverChan.use = true);
       this.$refs['serverChanForm'].clearValidate('serverChan')
     },
-    changeMessageUse() {
+    changeMessageCustom() {
       const msg = Object.keys(this.messagePush).filter(el => typeof this.messagePush[el] === 'object')
       //如果全部都是false,那么打开时全部都设置成true
       if (msg.every(el => this.messagePush[el].use === false)) {

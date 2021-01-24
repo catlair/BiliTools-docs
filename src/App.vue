@@ -12,12 +12,15 @@
           <el-menu-item index="2-1" @click="$router.push('/users/')">用户列表</el-menu-item>
           <el-menu-item index="2-2" @click="addUser">添加用户</el-menu-item>
         </el-submenu>
+        <el-submenu index="3">
+          <template slot="title"><i class="el-icon-folder"></i><span slot="title">数据管理</span></template>
+          <el-menu-item index="3-1" @click="$router.push('/data/format')">数据处理</el-menu-item>
+        </el-submenu>
       </el-menu>
-
       <el-container style="overflow: auto">
         <el-header style="text-align: right; font-size: 18px;margin-bottom: 30px">
         </el-header>
-          <router-view :key="$route.path"></router-view>
+        <router-view :key="$route.path"></router-view>
       </el-container>
     </el-container>
   </div>
