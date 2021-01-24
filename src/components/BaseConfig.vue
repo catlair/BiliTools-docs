@@ -36,7 +36,7 @@ export default {
     }
   },
   created() {
-    this.form = JSON.parse(JSON.stringify(this.$store.state.temp[this.saveKey].baseConfig))
+    this.form = Object.copy(this.$store.state.temp[this.saveKey].baseConfig)
   },
   methods: {
     getUserAgent() {

@@ -53,7 +53,7 @@ export default {
     }
   },
   created() {
-    this.form = JSON.parse(JSON.stringify(this.$store.state.temp[this.saveKey].coinsConfig))
+    this.form = Object.copy(this.$store.state.temp[this.saveKey].coinsConfig)
   },
   computed: {
     useAddCoin: {

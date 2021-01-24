@@ -86,8 +86,8 @@ export default {
     }
   },
   created() {
-    this.message = JSON.parse(JSON.stringify(this.$store.state.temp[this.saveKey].message))
-    this.messagePush = JSON.parse(JSON.stringify(this.$store.state.temp[this.saveKey].switch.message))
+    this.message = Object.copy(this.$store.state.temp[this.saveKey].message)
+    this.messagePush = Object.copy(this.$store.state.temp[this.saveKey].switch.message)
   },
   methods: {
     changeMessageEmail() {

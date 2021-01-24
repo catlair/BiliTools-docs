@@ -38,9 +38,10 @@
 </template>
 
 <script>
-// import gzip from '@/utils/gzip'
+import gzip from '@/utils/gzip'
 
 import {mapState} from "vuex";
+import form2data from "@/utils/form2data";
 
 export default {
   name: "UserList",
@@ -74,7 +75,8 @@ export default {
       this.getUsers();
     },
     onSubmit() {
-
+      const data = form2data(this.$store.state.account, this.$store.state.message)
+      this.gzip = gzip.gzipEncode(JSON.stringify(data));
     }
   }
 }
