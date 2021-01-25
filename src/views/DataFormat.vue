@@ -1,6 +1,6 @@
 <template>
   <el-row style="margin-top: -20px">
-    <el-col :span="12">
+    <el-col :span="10">
       <div class="grid-content bg-purple">
         输入gzip加密数据
         <el-button type="primary" @click="getGzip" style="margin: 0 0 6px 46%;"
@@ -14,7 +14,7 @@
         </el-input>
       </div>
     </el-col>
-    <el-col :span="12">
+    <el-col :span="14">
       <div class="grid-content bg-purple-light">
         输入json数据
         <el-button
@@ -23,12 +23,12 @@
           @click="restoreForm"
           >还原设置到表单</el-button
         >
-        <el-input
-          type="textarea"
-          :autosize="{ minRows: 20, maxRows: 30 }"
+        <b-code-editor
           v-model="jsonText"
-        >
-        </el-input>
+          :indent-unit="2"
+          :smart-indent="true"
+          height="auto"
+        />
       </div>
     </el-col>
   </el-row>
@@ -71,18 +71,23 @@ export default {
         try {
           this.gzip = gzip.gzipEncode(JSON.stringify(JSON.parse(value)));
         } catch (error) {
-          this.gzip = '非正确json';
+          this.gzip = null;
         }
       },
     },
+  },
+  created() {
+    window.onload = () => {
+      this.error = document.querySelector('.CodeMirror-lint-marker-error');
+      this.error.style.display = 'none';
+    };
   },
   methods: {
     gzip2json(value) {
       try {
         this.json = JSON.stringify(JSON.parse(gzip.gzipDecode(value)), null, 3);
       } catch (error) {
-        //无效
-        this.json = '非json数据';
+        this.json = '{"message":"非json数据"}';
       }
     },
     restoreForm() {
