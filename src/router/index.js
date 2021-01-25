@@ -3,11 +3,12 @@ import VueRouter from 'vue-router';
 import BaseMessagePush from '@/views/BaseMessagePush';
 import ConfigForm from '@/views/ConfigForm';
 import UserList from '@/views/UserList';
-import DataFormat from "@/views/DataFormat";
+import DataFormat from '@/views/DataFormat';
+import BulletinBoard from '@/views/BulletinBoard';
 
 Vue.use(VueRouter);
 const originalPush = VueRouter.prototype.push;
-VueRouter.prototype.push = function (location) {
+VueRouter.prototype.push = function(location) {
   return originalPush.call(this, location).catch((err) => err);
 };
 
@@ -15,7 +16,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    redirect: '/users',
+    component: BulletinBoard,
   },
   {
     path: '/common/message',
@@ -41,7 +42,7 @@ const routes = [
     path: '/data/format',
     name: 'Format',
     component: DataFormat,
-  }
+  },
 ];
 
 const router = new VueRouter({
