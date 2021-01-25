@@ -67,3 +67,15 @@ export function createTemplate() {
     },
   };
 }
+
+export function createMessage() {
+  return {
+    form: {
+      ...form().message,
+    },
+    switch: {
+      email: false,
+      serverChan: false,
+    },
+  };
+}

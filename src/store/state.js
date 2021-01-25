@@ -1,20 +1,13 @@
-import form, {createTemplate} from "@/data/form";
+import { createTemplate, createMessage } from '@/data/form';
 
-const createAccount = createTemplate()
+const createAccount = createTemplate();
 
 export default {
-    temp: {
-        createAccount,
-        message: {
-            form: {
-                ...form().message,
-            },
-            switch: {
-                email: false,
-                serverChan: false,
-            }
-        }
-    },
-    account: {},
-    message: {}
-}
+  temp: {
+    createAccount,
+    message: createMessage(),
+  },
+  account: {},
+  message: {},
+  updata: {},
+};

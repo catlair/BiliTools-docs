@@ -86,10 +86,18 @@ export default {
       }
     },
     restoreForm() {
-      if (!this.json) return;
-      const data = data2form(JSON.parse(this.json));
-      this.$message.success('还原成功');
-      this.$store.commit('restoreForm', data);
+      if (!this.json) {
+        this.$message.warning('内容为空');
+        return;
+      }
+      try {
+        const data = data2form(JSON.parse(this.json));
+        this.$message.success('还原成功');
+        this.$store.commit('restoreForm', data);
+      } catch (error) {
+        console.error(error);
+        this.$message.error(error.message);
+      }
     },
     getGzip() {
       const account = this.$store.state.account,

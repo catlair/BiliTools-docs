@@ -1,10 +1,11 @@
+/** 函数默认值 */
 export default {
   silver2Coin: true,
   liveSignTask: true,
   addCoins: true,
-  mangaSign: true,
+  mangaSign: false,
   shareAndWatch: true,
-  supGroupSign: true,
-  judgement: true,
-  liveSendMessage: true,
+  supGroupSign: false,
+  judgement: false,
+  liveSendMessage: false,
 };

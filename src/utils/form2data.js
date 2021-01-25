@@ -1,7 +1,12 @@
 import functionData from '@/data/functionData';
 
+//这里需要修改
 function getFunctionsOption(closeFunValues) {
   const tempFunctions = Object.copy(functionData);
+  Object.keys(tempFunctions).forEach((key) => {
+    tempFunctions[key] = true;
+  });
+
   closeFunValues.forEach((name) => {
     tempFunctions[name] = false;
   });
