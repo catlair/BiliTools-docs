@@ -53,7 +53,7 @@ export default {
       rules: {
         name: [
           {required: true, message: '用于区分和识别函数', trigger: 'blur'},
-          {pattern: /^\w+$/, message: '只能是字母数字和下划线', trigger: 'blur'}
+          {pattern: /^[A-Za-z][\w-_]{0,58}[A-Za-z0-9]$/, message: '字母开头,只能包含字母数字和-_', trigger: 'blur'}
         ],
         appName: {pattern: /^\w+$/, message: '只能是字母数字和下划线', trigger: 'blur'}
       },

@@ -34,7 +34,7 @@ export default {
     Vue.set(account, userId, temp[userId]);
     Vue.delete(temp, userId);
   },
-  copyToUpdate({ temp, account }, { userId }) {
+  copyToTemp({ temp, account }, { userId }) {
     Vue.set(temp, userId, Object.copy(account[userId]));
   },
   cancelCreateAccount({ temp }) {
@@ -55,5 +55,10 @@ export default {
       createAccount,
       message,
     });
+  },
+  copyAccount({ temp, account }, { userId }) {
+    const tempAccount = Object.copy(account[userId]);
+    Vue.set(temp, 'createAccount', tempAccount);
+    Vue.set(temp['createAccount']['baseConfig'], 'cookie', '');
   },
 };

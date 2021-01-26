@@ -7,6 +7,10 @@
         <template slot-scope="scope">
           <el-button
               size="mini"
+              @click="handleCopy(scope.$index, scope.row)">复制
+          </el-button>
+          <el-button
+              size="mini"
               @click="handleEdit(scope.$index, scope.row)">编辑
           </el-button>
           <el-button
@@ -18,11 +22,12 @@
       </el-table-column>
     </el-table>
     <el-row style="margin-top: 20px">
-      <el-col :span="20">
+      <el-col :span="18">
         <div class="grid-content bg-purple" style="visibility: hidden">1</div>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="6">
         <div class="grid-content bg-purple">
+          <el-button @click="clearTemp">清空编辑缓存</el-button>
           <el-button type="primary" @click="onSubmit">压缩配置</el-button>
         </div>
       </el-col>
@@ -66,9 +71,13 @@ export default {
       if (this.temp[row.userId]) {
         this.$message.info('检查到未保存的历史记录')
       } else {
-        this.$store.commit('copyToUpdate', {userId: row.userId})
+        this.$store.commit('copyToTemp', {userId: row.userId})
       }
       this.$router.push(`/users/${row.userId}/edit`);
+    },
+    handleCopy(index, row){
+      this.$store.commit("copyAccount", {userId: row.userId});
+      this.$router.push(`/users/add/${Object.keys(this.$store.state.account).length}`);
     },
     handleDelete(index, row) {
       console.log(this.users[index])
@@ -86,6 +95,9 @@ export default {
       const data = form2data(account, message)
       console.log(data)
       this.gzip = gzip.gzipEncode(JSON.stringify(data));
+    },
+    clearTemp(){
+      this.$store.commit('clearTempAccount')
     }
   }
 }
